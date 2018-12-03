@@ -15,8 +15,8 @@ setup_ci:
 .PHONY: install
 install:
 	sudo sed "s|{{DIR}}|$(dirname $(realpath ./Makefile))|g" \
-		dingdongditchcamera.service \
-		> /lib/systemd/system/dingdongditchcamera.service
+		dingdongditchcamera.service > \
+		/lib/systemd/system/dingdongditchcamera.service
 	sudo chmod 644 /lib/systemd/system/dingdongditchcamera.service
 	sudo systemctl daemon-reload
 	sudo systemctl enable dingdongditchcamera.service
