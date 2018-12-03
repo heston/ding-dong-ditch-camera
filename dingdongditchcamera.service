@@ -1,0 +1,14 @@
+[Unit]
+Description=Ding Dong Ditch Camera
+After=multi-user.target
+
+[Service]
+Type=idle
+WorkingDirectory={{DIR}}
+ExecStart=/usr/bin/make run
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
