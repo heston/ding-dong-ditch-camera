@@ -4,7 +4,6 @@ import logging
 from firebasedata import LiveData
 import pyrebase
 
-from . import main
 from . import settings
 
 logger = logging.getLogger(__name__)
