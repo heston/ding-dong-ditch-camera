@@ -28,6 +28,9 @@ storage = firebase_app.storage()
 
 
 def get_image_path(event_path):
+    if not event_path:
+        raise ValueError('No event path specified')
+
     parts = event_path.split('/')
     key = parts[-1]
     unit = parts[-2]
@@ -37,18 +40,19 @@ def get_image_path(event_path):
 def store_image(event_path, stream):
     path = get_image_path(event_path)
     storage.child(path).put(stream)
+    return path
 
 
 def handle_event(sender, value=None, path=None):
     logger.info('New event: %s at %s', value, path)
 
     if value is None or path == '/':
-        return
+        return None
 
     try:
 
         image = camera.capture_to_stream()
-        store_image(path, image)
+        return store_image(path, image)
     except Exception as e:
         logger.error('Unable to save image: %s', e, exc_info=True)
 

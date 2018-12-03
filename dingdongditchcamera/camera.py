@@ -4,9 +4,6 @@ import time
 
 import picamera
 
-# Create an in-memory stream
-my_stream = io.BytesIO()
-
 _camera = None
 
 
