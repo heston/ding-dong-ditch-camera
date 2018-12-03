@@ -33,11 +33,20 @@ uninstall:
 .PHONY: test
 test:
 	source venv/bin/activate; \
+	PYTHONPATH=.:./tests/mocks py.test tests
+
+.PHONY: test_ci
+test_ci:
 	PYTHONPATH=.:./tests/mocks py.test --cov=dingdongditchcamera --cov-branch tests
+
 
 .PHONY: lint
 lint:
 	source venv/bin/activate; \
+	flake8 dingdongditchcamera
+
+.PHONY: lint_ci
+lint_ci:
 	flake8 dingdongditchcamera
 
 .PHONY: run

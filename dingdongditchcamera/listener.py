@@ -25,8 +25,8 @@ firebase_app = pyrebase.initialize_app(firebase_config)
 live_data = LiveData(firebase_app, settings.FIREBASE_EVENTS_PATH, TTL)
 
 
-def handle_event(sender, value=None):
-    logger.info('New event: %s', value)
+def handle_event(sender, value=None, path=None):
+    logger.info('New event: %s at %s', value, path)
 
 
 live_data.signal('/').connect(handle_event)
