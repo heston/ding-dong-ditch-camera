@@ -3,7 +3,7 @@ import os
 import sys
 
 # The name of the Firebase app, used to construct the REST URL.
-FIREBASE_APP_NAME = os.getenv('DC_FIREBASE_APP_NAME', 'ding-dong-ditch-camera')
+FIREBASE_APP_NAME = os.getenv('DC_FIREBASE_APP_NAME', 'ding-dong-ditch')
 
 # Path to service account credentials file
 FIREBASE_KEY_PATH = os.getenv('DC_FIREBASE_KEY_PATH', '/home/pi/.firebasekey')
