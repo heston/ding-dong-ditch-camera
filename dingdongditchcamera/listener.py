@@ -38,6 +38,7 @@ def get_image_path(event_path):
 
 
 def store_image(event_path, stream):
+    logger.debug('Storing image %s for event %s', event_path, stream)
     path = get_image_path(event_path)
     storage.child(path).put(stream)
     return path
