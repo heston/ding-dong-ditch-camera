@@ -5,6 +5,8 @@ import time
 
 import picamera
 
+from . import settings
+
 logger = logging.getLogger(__name__)
 _camera = None
 
@@ -16,6 +18,8 @@ def get_camera():
         return _camera
 
     _camera = picamera.PiCamera()
+    _camera.rotation = settings.CAMERA_ROTATION
+
     _camera.start_preview()
     time.sleep(2)  # Camera warm-up time
     return _camera
