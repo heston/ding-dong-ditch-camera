@@ -15,6 +15,10 @@ AUTH_DOMAIN = '{}.firebaseapp.com'.format(settings.FIREBASE_APP_NAME)
 STORAGE_BUCKET = '{}.appspot.com'.format(settings.FIREBASE_APP_NAME)
 TTL = timedelta(minutes=75)
 
+VALID_EVENTS = (
+    'doorbell',
+)
+
 firebase_config = {
     'apiKey': settings.FIREBASE_API_KEY,
     'authDomain': AUTH_DOMAIN,
@@ -47,11 +51,19 @@ def store_image(event_path, stream):
 def handle_event(sender, value=None, path=None):
     logger.info('New event: %s at %s', value, path)
 
+    # If this event is empty, or at the root path, ignore it
     if value is None or path == '/':
         return None
 
+    # If the child value is invalid, ignore it
     try:
+        child_value = value.get(path)
+        if child_value is None or child_value.get('name') not in VALID_EVENTS:
+            return None
+    except AttributeError:
+        return None
 
+    try:
         image = camera.capture_to_stream()
         return store_image(path, image)
     except Exception as e:
