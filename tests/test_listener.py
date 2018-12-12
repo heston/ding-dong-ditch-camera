@@ -1,5 +1,7 @@
 import pytest
 
+from firebasedata import FirebaseData
+
 from dingdongditchcamera import listener
 
 
@@ -34,10 +36,11 @@ def test_store_image(mocker):
 
 def test_handle_event__logging(mocker):
     log_mock = mocker.patch('dingdongditchcamera.listener.logger')
+    data = FirebaseData()
 
-    listener.handle_event(object(), 'test', '/path')
+    listener.handle_event(object(), data, '/path')
 
-    log_mock.info.assert_called_with('New event: %s at %s', 'test', '/path')
+    log_mock.info.assert_called_with('New event: %s at %s', data, '/path')
 
 
 def test_handle_event__missing_value(mocker):
@@ -48,10 +51,38 @@ def test_handle_event__missing_value(mocker):
     assert not camera_mock.capture_to_stream.called
 
 
-def test_handle_event__root_path(mocker):
+def test_handle_event__invalid_value(mocker):
     camera_mock = mocker.patch('dingdongditchcamera.listener.camera')
 
-    listener.handle_event(object(), {}, '/')
+    listener.handle_event(object(), 'test', '/path')
+
+    assert not camera_mock.capture_to_stream.called
+
+
+def test_handle_event__root_path(mocker):
+    camera_mock = mocker.patch('dingdongditchcamera.listener.camera')
+    data = FirebaseData()
+
+    listener.handle_event(object(), data, '/')
+
+    assert not camera_mock.capture_to_stream.called
+
+
+def test_handle_event__empty_child(mocker):
+    camera_mock = mocker.patch('dingdongditchcamera.listener.camera')
+    data = FirebaseData()
+
+    listener.handle_event(object(), data, '/foo/bar')
+
+    assert not camera_mock.capture_to_stream.called
+
+
+def test_handle_event__invalid_child(mocker):
+    camera_mock = mocker.patch('dingdongditchcamera.listener.camera')
+    data = FirebaseData()
+    data.set('/foo/bar', {'name': 'huh'})
+
+    listener.handle_event(object(), data, '/foo/bar')
 
     assert not camera_mock.capture_to_stream.called
 
@@ -61,8 +92,10 @@ def test_handle_event__capture_raises(mocker):
     camera_mock = mocker.patch('dingdongditchcamera.listener.camera')
     error = RuntimeError('boom')
     camera_mock.capture_to_stream.side_effect = error
+    data = FirebaseData()
+    data.set('/foo', {'name': 'doorbell'})
 
-    listener.handle_event(object(), {}, '/foo')
+    listener.handle_event(object(), data, '/foo')
 
     log_mock.error.assert_called_with('Unable to save image: %s', error, exc_info=True)
 
@@ -72,8 +105,10 @@ def test_handle_event__store_image_raises(mocker):
     store_image_mock = mocker.patch('dingdongditchcamera.listener.store_image')
     error = RuntimeError('boom')
     store_image_mock.side_effect = error
+    data = FirebaseData()
+    data.set('/foo', {'name': 'doorbell'})
 
-    listener.handle_event(object(), {}, '/foo')
+    listener.handle_event(object(), data, '/foo')
 
     log_mock.error.assert_called_with('Unable to save image: %s', error, exc_info=True)
 
@@ -82,8 +117,10 @@ def test_handle_event__success(mocker):
     log_mock = mocker.patch('dingdongditchcamera.listener.logger')
     camera_mock = mocker.patch('dingdongditchcamera.listener.camera')
     store_image_mock = mocker.patch('dingdongditchcamera.listener.store_image')
+    data = FirebaseData()
+    data.set('/foo', {'name': 'doorbell'})
 
-    result = listener.handle_event(object(), {}, '/foo')
+    result = listener.handle_event(object(), data, '/foo')
 
     assert camera_mock.capture_to_stream.called
     store_image_mock.assert_called_with(
