@@ -10,7 +10,7 @@ google-cloud-storage==1.13.0
 google-resumable-media==0.3.1
 googleapis-common-protos==1.5.5
 idna==2.7
-protobuf==3.6.1
+protobuf==3.18.3
 pyasn1==0.4.4
 pyasn1-modules==0.2.2
 -e git+https://github.com/heston/Pyrebase.git@a77bd6f6def656b1dcd77d938fac2707f3c4ba61#egg=Pyrebase
